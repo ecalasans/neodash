@@ -1,0 +1,30 @@
+.style-brand {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  padding: 1em;
+}
+
+.style-brand-text {
+  font-weight: lighter;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  color: white;
+}
+
+.tamanho {
+  width: 40%;
+  height: 40%;
+  padding: 0.2em;
+}
+
+.vermelho {
+  background-color: red;
+}
+
+.azul {
+  background-color: blue;
+}
+
+/*# sourceMappingURL=style.css.map */
