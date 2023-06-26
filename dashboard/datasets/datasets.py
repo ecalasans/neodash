@@ -8,7 +8,7 @@ def getDatasetsToCSV():
 
     for chave, dataset in all_datasets.items():
         str_file = "{}.csv".format(chave)
-        path = '/Users/ericcalasans/Documents/Projetos/neodash/dashboard/datasets/'
+        path = '../neodash/dashboard/datasets/'
 
         if os.path.exists("{}{}".format(path, str_file)):
             print("{} será atualizado!".format(str_file))
