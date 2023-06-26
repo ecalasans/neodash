@@ -7,12 +7,11 @@ import numpy as np
 import pandas as pd
 import requests
 import json
-import environ
+from dotenv import load_dotenv
 import os
 import re
 
-env = environ.Env()
-env.read_env()
+load_dotenv('config.env')
 
 # Converte em dias ou horas
 def convHorasDia(campo, unid = 24.0):
@@ -22,7 +21,7 @@ def convHorasDia(campo, unid = 24.0):
 # Converte semanas em dias
 def paraDias(campo):
         if(re.match('[Tt]', campo) or campo == ''):
-            return np.nan
+            return np.random.randint(low=259, high=295, size=1)[0]
         elif re.match('\d+\s*[Hh]', campo):
             return np.round(np.float16((re.match('\d+\s*')[0])/7), 1)
         elif re.match('\d+\s*[Dd]', campo):
@@ -47,7 +46,7 @@ def paraDias(campo):
 #  Importa dataset bruto da API
 def getDataSet():
     data = {
-        'token': env('TOKEN_REDCAPRN'),
+        'token': os.getenv('TOKEN_REDCAPRN'),
         'content': 'record',
         'format': 'json',
         'type': 'flat',
@@ -412,6 +411,9 @@ def getParto():
 
     parto = dict_dfs['parto']
 
+    # Data de nascimento
+    parto['data_nasc'] = pd.to_datetime(parto['data_nasc'])
+
     # Sexo
     parto['sexo'] = parto['sexo'].replace(
         ['1', '2', '3', ''], ['Feminino', 'Masculino', 'Indefinido', 'Sem registro']
@@ -508,15 +510,15 @@ def getAntrop():
     antrop = dict_dfs['antrop']
 
     # Peso de nascimento
-    antrop['peso_nasc'] = antrop['peso_nasc'].replace('', np.nan)
+    antrop['peso_nasc'] = antrop['peso_nasc'].replace('', 0)
     antrop['peso_nasc'] =pd.to_numeric(antrop['peso_nasc'])
 
     # Estatura
-    antrop['estatura'] = antrop['estatura'].replace('', np.nan)
+    antrop['estatura'] = antrop['estatura'].replace('', 0)
     antrop['estatura'] = pd.to_numeric(antrop['estatura'])
 
     # Perímetro cefálico
-    antrop['pc'] = antrop['pc'].replace('', np.nan)
+    antrop['pc'] = antrop['pc'].replace('', 0)
     antrop['pc'] = pd.to_numeric(antrop['pc'])
 
     # Idade gestacional em dias
@@ -531,7 +533,7 @@ def getAntrop():
 
     antrop['ig_categ'] = pd.cut(
         x=antrop['ig_em_dias'],
-        bins=[0, 195, 237, 258, 293, 500],
+        bins=[0, 196, 238, 259, 294, 500],
         labels=["RNPTE", "RNPT Moderado", "RNPT Tardio", "Termo", "Pós-termo"],
         right=False
     )
@@ -539,7 +541,7 @@ def getAntrop():
     #antrop['ig_categ'] = antrop['ig_categ'].replace('NaN', 'Termo')
 
     for item in antrop['ig_categ'].unique():
-        antrop.loc[(antrop['peso_nasc'].isna()) & (antrop['ig_categ'] == item),'peso_nasc'] = np.round(
+        antrop.loc[(antrop['peso_nasc'] == 0) | (antrop['peso_nasc']).isna() | (antrop['ig_categ'] == item),'peso_nasc'] = np.round(
             antrop.loc[(antrop['ig_categ'] == item)]['peso_nasc'].mean(), 1)
         
         antrop.loc[
@@ -617,7 +619,7 @@ def getAdm():
     adm['hora_temp_adm'] = adm['hora_temp_adm'].replace('', np.nan)
 
     # Data da admissão
-    adm['data_adm_conv'] = pd.to_datetime(adm['data_adm'], format='mixed')
+    adm['data_adm_conv'] = pd.to_datetime(adm['data_adm'])
 
     return adm
 

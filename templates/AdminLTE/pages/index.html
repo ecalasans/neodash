@@ -59,6 +59,11 @@
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         {% block sidebar %}
+            <ul class="nav nav-pills nav-sidebar flex-column">
+                <li class="nav-item">
+                    <a href="{% url 'ident' %}" class="nav-link">Identificação</a>
+                </li>
+            </ul>
         {% endblock %}
       </nav>
       <!-- /.sidebar-menu -->

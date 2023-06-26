@@ -1,7 +1,9 @@
 from django.urls import path, include
-from .views import IdentificacaoAPIView
+from .views import IdentificacaoAPIView, index, AntropAPIView, ident
 
 
 urlpatterns = [
-    path('ident/', IdentificacaoAPIView.as_view(), name='ident')
+    path('', index, name='index'),
+    path('ident/', ident, name='ident'),
+    path('antrop/', AntropAPIView.as_view(), name='antrop')
 ]
