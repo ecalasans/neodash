@@ -1290,7 +1290,7 @@ def getDesfecho():
 
     # Data da alta
     desfecho['data_alta'] = desfecho['data_alta'].replace('', np.nan)
-    desfecho['data_alta_conv'] = pd.to_datetime(desfecho['data_alta'], format='mixed')
+    desfecho['data_alta_conv'] = pd.to_datetime(desfecho['data_alta'], dayfirst=True)
 
     # Causa óbito
     desfecho['causa_obito'] = desfecho['causa_obito'].replace(['', '5'], np.nan)
@@ -1345,6 +1345,52 @@ def getDesfecho():
     desfecho['tempo_permanencia'] = np.abs(np.int8((desfecho['data_alta_conv'] - admissao['data_adm_conv'])/np.timedelta64(1, 'D')))
 
     return desfecho
+
+
+def exportAllDatasets():
+    df_names = getDFNames()
+
+    ident = getIdent()
+    ant_maternos = getAntMaternos()
+    parto = getParto()
+    antrop = getAntrop()
+    admissao = getAdm()
+    resp = getResp()
+    card = getCard()
+    neuro = getNeuro()
+    oftalmo = getOftalmo()
+    hemato = getHemato()
+    renal = getRenal()
+    infecto = getInfecto()
+    atb = getAtb()
+    imuno = getImuno()
+    metab = getMetab()
+    cir = getCir()
+    nut = getNut()
+    desfecho = getDesfecho()
+
+    dfs = {
+        'ident': ident,
+        'ant_maternos': ant_maternos,
+        'parto': parto,
+        'antrop': antrop,
+        'admissao': admissao,
+        'resp': resp,
+        'card': card,
+        'neuro': neuro,
+        'oftalmo': oftalmo,
+        'hemato': hemato,
+        'renal': renal,
+        'infecto': infecto,
+        'atb': atb,
+        'imuno': imuno,
+        'metab': metab,
+        'cir': cir,
+        'nut': nut,
+        'desfecho': desfecho
+    }
+
+    return dfs
 
 def exportAllMergedDatasets():
     df_names = getDFNames()

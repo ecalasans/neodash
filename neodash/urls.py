@@ -17,9 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from dashboard import views
+from dashboard.datasets.datasets import getDatasetsToCSV
 
 urlpatterns = [
     path('', include('dashboard.urls')),
     path('api/dashboard/', include('dashboard.urls')),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
 ]
+
+getDatasetsToCSV()
