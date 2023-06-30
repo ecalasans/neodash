@@ -3,20 +3,27 @@
 
 from dash import dcc, html
 from dash.dependencies import Input, Output
-from dashboard.graphs import handle_dataset
 from django_plotly_dash import DjangoDash
+from django.conf import settings
 import plotly.graph_objs as go
 import pandas as pd
+
 import datetime as dt
+import os
 
 import locale
 
 locale.setlocale(category=locale.LC_TIME, locale='pt_BR')
 
-# Aquisição e manipulação dos dados
-df_ident = handle_dataset.getIdent()
-df_parto = handle_dataset.getParto()
+# Aquisição dos dados
 
+df_ident = settings.IDENT
+df_parto = settings.PARTO
+
+
+#################################################################################
+# NASCIMENTOS POR ANO
+# Manipulação de dados
 join_dfs = pd.merge(df_ident, df_parto, left_index=True, right_index=True)
 join_dfs = join_dfs.dropna(subset=['data_nasc'])
 join_dfs = join_dfs.sort_values(by=['data_nasc'])
@@ -30,9 +37,6 @@ por_ano = join_dfs.groupby(join_dfs['data_nasc'].dt.year)['data_nasc'].count()
 por_ano_mes = join_dfs.groupby([join_dfs['data_nasc'].dt.year,
                                 join_dfs['data_nasc'].dt.month,
                                 join_dfs['nome_mes']])['data_nasc'].count()
-
-#################################################################################
-# NASCIMENTOS POR ANO
 # Confecção da figura
 data_app1 = go.Bar(
     x=por_ano.index,

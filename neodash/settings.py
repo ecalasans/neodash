@@ -9,9 +9,14 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 import environ
+
+from dashboard.datasets.datasets import getDatasetsToCSV
+from dashboard.graphs import handle_dataset
+
+import pandas as pd
 
 env = environ.Env()
 env.read_env()
@@ -144,3 +149,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework.authentication.SessionAuthentication',],
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny',]
 }
+
+
+#  GLOBAIS
+dfs = handle_dataset.exportAllDatasets()
+
+IDENT = handle_dataset.getIdent()
+PARTO = handle_dataset.getParto()
