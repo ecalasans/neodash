@@ -1,8 +1,8 @@
 from django.shortcuts import render
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
+
 from .graphs import handle_dataset
-from .graphs import ident_graphs
-from django.contrib.sessions.backends.db import SessionStore
-from django.conf import settings
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,8 +10,14 @@ from rest_framework.response import Response
 from .serializers import DataSetSerializer
 
 
-# Create your views here.
+#######################################################################################################################
+# LOGIN
+#######################################################################################################################
+def login(request):
+    return render(request, 'dashboard/registration/login.html')
 
+
+@login_required
 def index(request):
     """
     dfs = handle_dataset.exportAllDatasets()

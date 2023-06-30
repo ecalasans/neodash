@@ -2,5 +2,12 @@
 {% load plotly_dash %}
 
 {% block container_main %}
-    
+    <div class="row">
+        <div class="col-md-6">
+            {% plotly_app_bootstrap name='NascAno' %}
+        </div>
+        <div class="col-md-6">
+            {% plotly_app_bootstrap name='NascAnoMes' %}
+        </div>
+    </div>
 {% endblock %}
