@@ -15,53 +15,49 @@
   <link rel="stylesheet" href="../../../static/dist/css/adminlte.min.css">
 </head>
 <body class="hold-transition login-page">
-    <div class="login-box">
-      <div class="login-logo">
-          <a href="#"><b>NeoDash</b></a>
-      </div>
-      <!-- /.login-logo -->
-      <div class="card">
-        <div class="card-body login-card-body">
-          <p class="login-box-msg">Use o mesmo login do Pass</p>
+    {% block login %}
+        {% comment %}
+        <div class="login-box">
+          <div class="login-logo">
+              <a href="#"><b>NeoDash</b></a>
+          </div>
+          <!-- /.login-logo -->
+          <div class="card">
+            <div class="card-body login-card-body">
+              <p class="login-box-msg">Use o mesmo login do Pass</p>
 
-          <form action="#" method="post">
-            <div class="input-group mb-3">
-              <input type="text" class="form-control" placeholder="Login do Pass">
-              <div class="input-group-append">
-                <div class="input-group-text">
-                  <span class="fas fa-envelope"></span>
+              <form action="#" method="post">
+                <div class="flex flex-row justify-content-start mb-3">
+                  <p>Login</p>
+                  <input type="text" class="form-control" id="user_login" name="user_login">
                 </div>
-              </div>
-            </div>
-            <div class="input-group mb-3">
-              <input type="password" class="form-control" placeholder="Senha do Pass">
-              <div class="input-group-append">
-                <div class="input-group-text">
-                  <span class="fas fa-lock"></span>
+                <div class="flex flex-row justify-content-start mb-3">
+                  <p>Senha</p>
+                  <input type="password" class="form-control" id="user_password" name="user_password">
                 </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-8">
-                <div class="icheck-primary">
-                  <input type="checkbox" id="remember">
-                  <label for="remember">
-                    Lembre de mim!
-                  </label>
+                <div class="row">
+                  <div class="col-8">
+                    <div class="icheck-primary">
+                      <input type="checkbox" id="remember">
+                      <label for="remember">
+                        Lembre de mim!
+                      </label>
+                    </div>
+                  </div>
+                  <!-- /.col -->
+                  <div class="col-4">
+                    <button type="submit" class="btn btn-primary btn-block" id="btn_login" name="btn_login">Login</button>
+                  </div>
+                  <!-- /.col -->
                 </div>
-              </div>
-              <!-- /.col -->
-              <div class="col-4">
-                <button type="submit" class="btn btn-primary btn-block">Login</button>
-              </div>
-              <!-- /.col -->
-            </div>
-          </form>
-        <!-- /.login-card-body -->
-      </div>
-    </div>
-    <!-- /.login-box -->
-    </div>
+              </form>
+            <!-- /.login-card-body -->
+          </div>
+        </div>
+        <!-- /.login-box -->
+        </div>
+        {% endcomment %}
+    {% endblock %}
 <!-- jQuery -->
 <script src="../../../static/plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->

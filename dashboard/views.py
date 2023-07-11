@@ -1,8 +1,13 @@
 from django.shortcuts import render
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from django.http import HttpResponse
 
-from .graphs import handle_dataset
+
+from .graphs import handle_dataset_async
+import asyncio
+from asgiref.sync import sync_to_async
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -14,7 +19,21 @@ from .serializers import DataSetSerializer
 # LOGIN
 #######################################################################################################################
 def login(request):
-    return render(request, 'dashboard/registration/login.html')
+
+    if request.method == 'GET':
+        return render(request, 'dashboard/registration/login.html')
+    elif request.method == 'POST':
+        user = authenticate(request, username=request.POST['user_login'], password=request.POST['user_password'])
+
+        if user:
+            print('Logado')
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            df = loop.run_until_complete(handle_dataset_async.startTempDFs())
+            loop.close()
+            return HttpResponse("Logado")
+        else:
+            print('Não existe usuário!')
 
 
 @login_required

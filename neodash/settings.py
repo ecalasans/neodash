@@ -12,9 +12,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 import environ
+import asyncio
 
 from dashboard.datasets.datasets import getDatasetsToCSV
-from dashboard.graphs import handle_dataset
+from dashboard.graphs import handle_dataset_async
 
 import pandas as pd
 
@@ -130,6 +131,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+
 STATIC_URL = "static/"
 STATICFILES_DIRS = [
     BASE_DIR/'static',
@@ -154,8 +156,22 @@ REST_FRAMEWORK = {
 }
 
 
-#  GLOBAIS
-dfs = handle_dataset.exportAllDatasets()
-
-IDENT = handle_dataset.getIdent()
-PARTO = handle_dataset.getParto()
+# GLOBAIS
+IDENT = ''
+ANTMATERNOS = ''
+PARTO = ''
+ANTROP = ''
+ADMISSAO = ''
+RESP = ''
+CARDIO = ''
+NEURO = ''
+OFTALMO = ''
+HEMATO = ''
+RENAL = ''
+INFECTO = ''
+ATB = ''
+IMUNO = ''
+METAB = ''
+CIR = ''
+NUT = ''
+DESFECHO = ''
