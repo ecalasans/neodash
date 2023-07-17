@@ -21,7 +21,6 @@ from dashboard import views
 urlpatterns = [
     path('', include('dashboard.urls')),
     path('admin/', admin.site.urls),
-    path('api/dashboard/', include('dashboard.urls')),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
 ]
 

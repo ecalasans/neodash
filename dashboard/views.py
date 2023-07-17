@@ -1,13 +1,14 @@
-from django.shortcuts import render
+import re
+
+from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.http import HttpResponse
 
-
 from .graphs import handle_dataset_async
 import asyncio
-from asgiref.sync import sync_to_async
+import inspect
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -15,25 +16,43 @@ from rest_framework.response import Response
 from .serializers import DataSetSerializer
 
 
+def asyncronizeIt(function, *args):
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    result = loop.run_until_complete(function)
+    loop.close()
+    return result
+
+
+def configDataFrames(dataset):
+    funcoes = asyncio.run(handle_dataset_async.extractGetFunctions(script=handle_dataset_async))
+
+    for f in funcoes:
+        chave = str.upper(re.split(pattern=r"get", string=f.__name__)[1])
+
+        settings.DATASETS['chave'] = asyncio.run(f(dataset))
+
+        print('Configurando DATASETS[{}]...'.format(chave))
+
+
+
 #######################################################################################################################
 # LOGIN
 #######################################################################################################################
-def login(request):
-
+def sysLogin(request):
     if request.method == 'GET':
         return render(request, 'dashboard/registration/login.html')
     elif request.method == 'POST':
         user = authenticate(request, username=request.POST['user_login'], password=request.POST['user_password'])
 
-        if user:
+        if user is not None:
+            login(request, user)
             print('Logado')
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            df = loop.run_until_complete(handle_dataset_async.startTempDFs())
-            loop.close()
-            return HttpResponse("Logado")
+            dataset = asyncio.run(handle_dataset_async.startTempDFs())
+            configDataFrames(dataset=dataset)
+            return redirect('index')
         else:
-            print('Não existe usuário!')
+            return HttpResponse('Usuário inexistente!')
 
 
 @login_required
@@ -62,7 +81,7 @@ def index(request):
 
     """
 
-    return render(request, 'dashboard/index.html')
+    return HttpResponse('Estou no index!')
 
 
 def ident(request):
@@ -75,18 +94,20 @@ def ident(request):
 class IdentificacaoAPIView(APIView):
 
     def get(self, request):
-        ident = handle_dataset.getIdent()
-        serializer = DataSetSerializer(instance=ident)
-        serialized = serializer.to_representation(instance=ident)
-
-        return Response(serialized)
+        # ident = handle_dataset.getIdent()
+        # serializer = DataSetSerializer(instance=ident)
+        # serialized = serializer.to_representation(instance=ident)
+        #
+        # return Response(serialized)
+        pass
 
 
 class AntropAPIView(APIView):
 
     def get(self, request):
-        antrop = handle_dataset.getAntrop()
-        serializer = DataSetSerializer(instance=antrop)
-        serialized = serializer.to_representation(instance=antrop)
-
-        return Response(serialized)
+        # antrop = handle_dataset.getAntrop()
+        # serializer = DataSetSerializer(instance=antrop)
+        # serialized = serializer.to_representation(instance=antrop)
+        #
+        # return Response(serialized)
+        pass
