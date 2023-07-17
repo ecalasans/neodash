@@ -8,17 +8,22 @@ from django.conf import settings
 import plotly.graph_objs as go
 import pandas as pd
 
+from dashboard.graphs import handle_dataset_async
+
 import datetime as dt
 import os
+import asyncio
 
 import locale
 
 locale.setlocale(category=locale.LC_TIME, locale='pt_BR')
 
 # Aquisição dos dados
+dataset = asyncio.run(handle_dataset_async.startTempDFs())
 
-df_ident = settings.IDENT
-df_parto = settings.PARTO
+
+df_ident = asyncio.run(handle_dataset_async.getIdent(dataset))
+df_parto = asyncio.run(handle_dataset_async.getParto(dataset))
 
 
 #################################################################################

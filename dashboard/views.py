@@ -15,7 +15,6 @@ from rest_framework.response import Response
 
 from .serializers import DataSetSerializer
 
-
 def asyncronizeIt(function, *args):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -54,6 +53,13 @@ def sysLogin(request):
         else:
             return HttpResponse('Usuário inexistente!')
 
+def sysLogout(request):
+    logout(request)
+    return redirect('login')
+
+#######################################################################################################################
+# HOME
+#######################################################################################################################
 
 @login_required
 def index(request):
@@ -80,10 +86,17 @@ def index(request):
     request.session['desfecho'] = dfs['desfecho'].to_json()
 
     """
+    return render(
+        request,
+        'dashboard/index.html',
+        context={
+            'usuario': request.user.first_name
+        }
+    )
 
-    return HttpResponse('Estou no index!')
-
-
+#######################################################################################################################
+# GRÁFICOS
+#######################################################################################################################
 def ident(request):
     return render(request, 'dashboard/ident.html')
 

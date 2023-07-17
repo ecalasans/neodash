@@ -1,7 +1,7 @@
 .style-brand {
   display: flex;
   justify-content: center;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: nowrap;
   padding: 1em;
 }
@@ -11,6 +11,12 @@
   font-size: 1.25rem;
   line-height: 1.5;
   color: white;
+  text-align: center;
+  transition: 2s;
+}
+.style-brand-text:hover {
+  font-size: 1.3rem;
+  color: white;
 }
 
 .tamanho {
@@ -19,12 +25,8 @@
   padding: 0.2em;
 }
 
-.vermelho {
-  background-color: red;
-}
-
-.azul {
-  background-color: blue;
+.logout_link {
+  font-size: 0.7rem;
 }
 
 .container-custom {
