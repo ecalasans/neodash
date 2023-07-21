@@ -32,6 +32,7 @@ def configDataFrames(dataset):
         settings.DATASETS['chave'] = asyncio.run(f(dataset))
 
         print('Configurando DATASETS[{}]...'.format(chave))
+        print(type(settings.DATASETS['chave']))
 
 
 
@@ -107,20 +108,25 @@ def ident(request):
 class IdentificacaoAPIView(APIView):
 
     def get(self, request):
-        # ident = handle_dataset.getIdent()
-        # serializer = DataSetSerializer(instance=ident)
-        # serialized = serializer.to_representation(instance=ident)
-        #
-        # return Response(serialized)
-        pass
+        if settings.DATASETS['IDENT'] != '':
+            ident = settings.DATASETS['IDENT']
+        else:
+            dataset = asyncio.run(handle_dataset_async.startTempDFs())
+            ident = asyncio.run(handle_dataset_async.getIdent(dataset))
 
+        serializer = DataSetSerializer(instance=ident, many=True)
+        serialized = serializer.to_representation(ident)
 
-class AntropAPIView(APIView):
+        return Response(serialized)
 
-    def get(self, request):
-        # antrop = handle_dataset.getAntrop()
-        # serializer = DataSetSerializer(instance=antrop)
-        # serialized = serializer.to_representation(instance=antrop)
-        #
-        # return Response(serialized)
-        pass
+# class AntropAPIView(APIView):
+#     if settings.DATASETS['ANTROP'] != '':
+#         antrop = settings.DATASETS['ANTROP']
+#     else:
+#         dataset = asyncio.run(handle_dataset_async.startTempDFs())
+#         antrop = asyncio.run(handle_dataset_async.getIdent(dataset))
+#     def get(self, request):
+#         serializer = DataSetSerializer(instance=antrop)
+#         serialized = serializer.to_representation(instance=antrop)
+#
+#         return Response(serialized)

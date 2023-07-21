@@ -27,7 +27,7 @@ df_parto = asyncio.run(handle_dataset_async.getParto(dataset))
 
 
 #################################################################################
-# NASCIMENTOS POR ANO
+# ADMISSÕES POR ANO
 # Manipulação de dados
 join_dfs = pd.merge(df_ident, df_parto, left_index=True, right_index=True)
 join_dfs = join_dfs.dropna(subset=['data_nasc'])
@@ -49,7 +49,7 @@ data_app1 = go.Bar(
 )
 
 layout_app1 = go.Layout(
-    title='Nascimentos por Ano',
+    title='Admissões por Ano',
     autosize=True,
     xaxis={
         'dtick': 1
@@ -70,7 +70,7 @@ app1.layout = html.Div(
     ]
 )
 #################################################################################
-# NASCIMENTOS POR MÊS EM DETERMINADO ANO
+# ADMISSÕES POR MÊS EM DETERMINADO ANO
 # Confecção da figura
 year_options = []
 
@@ -119,7 +119,7 @@ def updateFigure(selected_year):
     )
 
     layout = go.Layout(
-        title="Nascimentos por mês no ano de {}".format(str(selected_year))
+        title="Admissões por mês no ano de {}".format(str(selected_year))
     )
 
     fig_app2 = go.Figure(data=data, layout=layout)
