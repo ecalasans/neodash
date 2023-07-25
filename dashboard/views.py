@@ -12,8 +12,13 @@ import inspect
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.generics import ListAPIView
+from rest_framework import viewsets
 
 from .serializers import DataSetSerializer
+
+dataset = asyncio.run(handle_dataset_async.startTempDFs())
+
 
 def asyncronizeIt(function, *args):
     loop = asyncio.new_event_loop()
@@ -29,11 +34,10 @@ def configDataFrames(dataset):
     for f in funcoes:
         chave = str.upper(re.split(pattern=r"get", string=f.__name__)[1])
 
-        settings.DATASETS['chave'] = asyncio.run(f(dataset))
+        settings.DATASETS["{}".format(chave)] = asyncio.run(f(dataset))
 
         print('Configurando DATASETS[{}]...'.format(chave))
-        print(type(settings.DATASETS['chave']))
-
+        print(type(settings.DATASETS[chave]))
 
 
 #######################################################################################################################
@@ -48,15 +52,16 @@ def sysLogin(request):
         if user is not None:
             login(request, user)
             print('Logado')
-            dataset = asyncio.run(handle_dataset_async.startTempDFs())
             configDataFrames(dataset=dataset)
             return redirect('index')
         else:
             return HttpResponse('Usuário inexistente!')
 
+
 def sysLogout(request):
     logout(request)
     return redirect('login')
+
 
 #######################################################################################################################
 # HOME
@@ -64,29 +69,7 @@ def sysLogout(request):
 
 @login_required
 def index(request):
-    """
-    dfs = handle_dataset.exportAllDatasets()
 
-    request.session['ident'] = dfs['ident'].to_json()
-    request.session['ant_maternos'] = dfs['ant_maternos'].to_json()
-    request.session['parto'] = dfs['parto'].to_json()
-    request.session['antrop'] = dfs['antrop'].to_json
-    request.session['admissao'] = dfs['admissao'].to_json()
-    request.session['resp'] = dfs['resp'].to_json()
-    request.session['card'] = dfs['card'].to_json()
-    request.session['neuro'] = dfs['neuro'].to_json()
-    request.session['oftalmo'] = dfs['oftalmo'].to_json()
-    request.session['hemato'] = dfs['hemato'].to_json()
-    request.session['renal'] = dfs['renal'].to_json()
-    request.session['infecto'] = dfs['infecto'].to_json()
-    request.session['atb'] = dfs['atb'].to_json()
-    request.session['imuno'] = dfs['imuno'].to_json()
-    request.session['metab'] = dfs['metab'].to_json()
-    request.session['cir'] = dfs['cir'].to_json()
-    request.session['nut'] = dfs['nut'].to_json()
-    request.session['desfecho'] = dfs['desfecho'].to_json()
-
-    """
     return render(
         request,
         'dashboard/index.html',
@@ -94,6 +77,7 @@ def index(request):
             'usuario': request.user.first_name
         }
     )
+
 
 #######################################################################################################################
 # GRÁFICOS
@@ -111,7 +95,6 @@ class IdentificacaoAPIView(APIView):
         if settings.DATASETS['IDENT'] != '':
             ident = settings.DATASETS['IDENT']
         else:
-            dataset = asyncio.run(handle_dataset_async.startTempDFs())
             ident = asyncio.run(handle_dataset_async.getIdent(dataset))
 
         serializer = DataSetSerializer(instance=ident, many=True)
@@ -119,14 +102,50 @@ class IdentificacaoAPIView(APIView):
 
         return Response(serialized)
 
-# class AntropAPIView(APIView):
-#     if settings.DATASETS['ANTROP'] != '':
-#         antrop = settings.DATASETS['ANTROP']
-#     else:
-#         dataset = asyncio.run(handle_dataset_async.startTempDFs())
-#         antrop = asyncio.run(handle_dataset_async.getIdent(dataset))
-#     def get(self, request):
-#         serializer = DataSetSerializer(instance=antrop)
-#         serialized = serializer.to_representation(instance=antrop)
-#
-#         return Response(serialized)
+
+class AntropAPIView(ListAPIView):
+    queryset = settings.DATASETS['ANTROP']
+    serializer_class = DataSetSerializer
+
+    def get_queryset(self):
+        if settings.DATASETS['ANTROP'] != '':
+            return settings.DATASETS['ANTROP']
+        else:
+            return asyncio.run(handle_dataset_async.getAntrop(dataset))
+
+
+class GenericAPIView(ListAPIView):
+    queryset = None
+    serializer_class = DataSetSerializer
+
+    def get_queryset(self):
+        param = self.kwargs.get('dataset')
+
+        if settings.DATASETS[str.upper(param)] != '':
+            return settings.DATASETS[param]
+        else:
+            # Captura as funções
+            funcoes = asyncio.run(handle_dataset_async.extractGetFunctions(script=handle_dataset_async))
+
+            # Seleciona e executa a função que bate com o endpoint
+            nome_funcao = "get{}".format(str.capitalize(param))
+
+            funcao = [f for f in funcoes if f.__name__ == nome_funcao][0]
+
+            funcao_sign = inspect.signature(funcao)
+
+            arguments = {
+                'dataset': dataset
+            }
+
+            funcao_bind = funcao_sign.bind(**arguments)
+            funcao_bind.apply_defaults()
+
+            # Retorna o resultado
+            result = asyncio.run(funcao(**arguments))
+
+            return result
+
+
+
+

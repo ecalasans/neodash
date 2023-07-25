@@ -111,7 +111,7 @@ async def extractDFs():
                 'vni', 'vm', 'ox_nitrico', 'tempo_o2', 'o2_28', 'o2_36', 'num_intub',
                 'falha_extub', 'surfactante', 'dose_surf', 'hv_surf', 'extub_acid']]
 
-    card = dataset[['pca', 'med_pca', 'med_util_pca', 'cc', 'cir_cardiaca', 'cvu', 'cva',
+    cardio = dataset[['pca', 'med_pca', 'med_util_pca', 'cc', 'cir_cardiaca', 'cvu', 'cva',
                 'picc', 'dias_dissec', 'pun_ven_prof', 'dva', 'eco']]
 
     neuro = dataset[['usg_tf', 'outros_usgtf', 'hidrocefalia', 'leucomalacia', 'convulsao',
@@ -167,7 +167,7 @@ async def extractDFs():
         'antrop': antrop,
         'admissao': admissao,
         'resp': resp,
-        'card': card,
+        'cardio': cardio,
         'neuro': neuro,
         'oftalmo': oftalmo,
         'hemato': hemato,
@@ -585,7 +585,7 @@ async def getAntrop(dataset):
     return antrop
 
 # Dados da Admissão
-async def getAdm(dataset):
+async def getAdmissao(dataset):
     adm = dataset['admissao']
 
     # Horário da admissão
@@ -729,8 +729,8 @@ async def getResp(dataset):
     return resp
 
 #  Intercorrências cardiológicas
-async def getCard(dataset):
-    card = dataset['card']
+async def getCardio(dataset):
+    card = dataset['cardio']
 
     # Persistência do canal arterial
     card['pca'] = card['pca'].replace('', np.nan)
@@ -1336,7 +1336,7 @@ async def getDesfecho(dataset):
     desfecho['reg_alim_alta'] = desfecho['reg_alim_alta'].replace('', np.nan)
 
     # Tempo de permanência
-    admissao = await getAdm(dataset)
+    admissao = await getAdmissao(dataset)
     desfecho['tempo_permanencia'] = np.abs(np.int8((desfecho['data_alta_conv'] - admissao['data_adm_conv'])/np.timedelta64(1, 'D')))
 
     return desfecho
