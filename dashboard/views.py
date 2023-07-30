@@ -8,6 +8,7 @@ from django.http import HttpResponse
 
 from .graphs import handle_dataset_async
 import asyncio
+import aiohttp
 import inspect
 
 from rest_framework.views import APIView
@@ -43,19 +44,33 @@ def configDataFrames(dataset):
 #######################################################################################################################
 # LOGIN
 #######################################################################################################################
-def sysLogin(request):
+async def sysLogin(request):
     if request.method == 'GET':
         return render(request, 'dashboard/registration/login.html')
     elif request.method == 'POST':
-        user = authenticate(request, username=request.POST['user_login'], password=request.POST['user_password'])
+        data = {
+            'username': request.POST.get('user_login'),
+            'password': request.POST.get('user_password')
 
-        if user is not None:
-            login(request, user)
-            print('Logado')
-            configDataFrames(dataset=dataset)
-            return redirect('index')
-        else:
-            return HttpResponse('Usuário inexistente!')
+        }
+        async with aiohttp.ClientSession() as session:
+            async with session.post('http://localhost:8000/api/authentication/', data=data) as r:
+                if r:
+                    print('Deu match')
+                    return HttpResponse('Deu match na API')
+                else:
+                    print('Deu bosta')
+                    return HttpResponse('Deu bosta')
+
+        # user = authenticate(request, username=request.POST['user_login'], password=request.POST['user_password'])
+        #
+        # if user is not None:
+        #     login(request, user)
+        #     print('Logado')
+        #     configDataFrames(dataset=dataset)
+        #     return redirect('index')
+        # else:
+        #     return HttpResponse('Usuário inexistente!')
 
 
 def sysLogout(request):
