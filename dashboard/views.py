@@ -1,4 +1,10 @@
 import re
+import asyncio
+import aiohttp
+import inspect
+import json
+
+from asgiref.sync import sync_to_async, async_to_sync
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
@@ -7,9 +13,6 @@ from django.conf import settings
 from django.http import HttpResponse
 
 from .graphs import handle_dataset_async
-import asyncio
-import aiohttp
-import inspect
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -40,6 +43,13 @@ def configDataFrames(dataset):
         print('Configurando DATASETS[{}]...'.format(chave))
         print(type(settings.DATASETS[chave]))
 
+    settings.DATASETS_FULL = True
+
+def setSessionVariable(request, key, value):
+    request.session[key] = value
+    request.session.save()
+
+
 
 #######################################################################################################################
 # LOGIN
@@ -53,24 +63,26 @@ async def sysLogin(request):
             'password': request.POST.get('user_password')
 
         }
+        result = None
         async with aiohttp.ClientSession() as session:
             async with session.post('http://localhost:8000/api/authentication/', data=data) as r:
                 if r:
-                    print('Deu match')
-                    return HttpResponse('Deu match na API')
+                    r_dump = json.dumps(await r.json())
+
+                    result = json.loads(r_dump)
+
+                    await sync_to_async(setSessionVariable)(request, 'first_name', result['first_name'])
+                    await sync_to_async(setSessionVariable)(request, 'last_name', result['last_name'])
+
+                    return redirect('index')
+
                 else:
                     print('Deu bosta')
                     return HttpResponse('Deu bosta')
 
-        # user = authenticate(request, username=request.POST['user_login'], password=request.POST['user_password'])
-        #
-        # if user is not None:
-        #     login(request, user)
-        #     print('Logado')
-        #     configDataFrames(dataset=dataset)
-        #     return redirect('index')
-        # else:
-        #     return HttpResponse('Usuário inexistente!')
+
+
+
 
 
 def sysLogout(request):
@@ -82,14 +94,16 @@ def sysLogout(request):
 # HOME
 #######################################################################################################################
 
-@login_required
+
 def index(request):
+    if settings.DATASETS_FULL == False:
+        configDataFrames(dataset)
 
     return render(
         request,
         'dashboard/index.html',
         context={
-            'usuario': request.user.first_name
+            'usuario': "{} {}".format(request.session.get('first_name'), request.session.get('last_name'))
         }
     )
 
@@ -98,7 +112,13 @@ def index(request):
 # GRÁFICOS
 #######################################################################################################################
 def ident(request):
-    return render(request, 'dashboard/ident.html')
+    return render(
+        request,
+        'dashboard/ident.html',
+        context={
+            'usuario': "{} {}".format(request.session.get('first_name'), request.session.get('last_name'))
+        }
+    )
 
 
 #######################################################################################################################

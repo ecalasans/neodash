@@ -152,22 +152,25 @@ REST_FRAMEWORK = {
 
 # GLOBAIS
 DATASETS = {
-    'IDENT': '',
-    'ANTMATERNOS': '',
-    'PARTO': '',
-    'ANTROP': '',
-    'ADMISSAO': '',
-    'RESP': '',
-    'CARDIO': '',
-    'NEURO': '',
-    'OFTALMO': '',
-    'HEMATO': '',
-    'RENAL': '',
-    'INFECTO': '',
-    'ATB': '',
-    'IMUNO': '',
-    'METAB': '',
-    'CIR': '',
-    'NUT': '',
-    'DESFECHO': ''
+    'IDENT': None,
+    'ANTMATERNOS': None,
+    'PARTO': None,
+    'ANTROP': None,
+    'ADMISSAO': None,
+    'RESP': None,
+    'CARDIO': None,
+    'NEURO': None,
+    'OFTALMO': None,
+    'HEMATO': None,
+    'RENAL': None,
+    'INFECTO': None,
+    'ATB': None,
+    'IMUNO': None,
+    'METAB': None,
+    'CIR': None,
+    'NUT': None,
+    'DESFECHO': None,
+    'BOAS_PRATICAS': None
 }
+
+DATASETS_FULL = False

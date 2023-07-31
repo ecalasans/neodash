@@ -160,6 +160,13 @@ async def extractDFs():
                     'est_desfecho', 'pc_desfecho', 'peleapele', 'tvpele_a_pele',
                     'orient_pos_canguru', 'idade_pos_canguru', 'reg_alim_alta']]
 
+    boaspraticas = dataset[['dieta_enteral_24hv', 'colostro_inicio_dieta', 'npt_precoce',
+                            'surfactante_bp', 'cvu_1500g', 'picc_5dv', 'cafeina_ev_adm',
+                            'foto_profilatica', 'pos_canguru', 'extubacao_7d',
+                            'cpap_32sem', 'usgtf_fim_mm', 'vitaminas_7dv', 'tp_1_amostra',
+                            'tp_2_amostra', 'palivizumabe_7dv', 'hepb_1sem',
+                            'fe_profilatico_28dv', 'dmopt_4sem', 'fo_28dv', 'zn_36sem']]
+
     return  {
         'ident': ident,
         'antmaternos': antmaternos,
@@ -178,7 +185,8 @@ async def extractDFs():
         'metab': metab,
         'cir': cir,
         'nut': nut,
-        'desfecho': desfecho
+        'desfecho': desfecho,
+        'boaspraticas': boaspraticas
     }
 
 #  Configura cache de dataframes
@@ -1340,6 +1348,11 @@ async def getDesfecho(dataset):
     desfecho['tempo_permanencia'] = np.abs(np.int8((desfecho['data_alta_conv'] - admissao['data_adm_conv'])/np.timedelta64(1, 'D')))
 
     return desfecho
+
+async def getBoasPraticas(dataset):
+    bp = dataset['boaspraticas']
+
+    return bp
 
 # Retorna uma lista de funções do tipo getNomeDataset
 async def extractGetFunctions():

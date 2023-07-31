@@ -7,8 +7,8 @@ from .graphs import ident_graphs
 
 
 urlpatterns = [
-    path('', index, name='index'),
-    path('login/', sysLogin, name='login'),
+    path('home/', index, name='index'),
+    path('', sysLogin, name='login'),
     path('logout/', sysLogout, name='logout'),
     path('ident/', ident, name='ident'),
     #path('api/ident/', IdentificacaoAPIView.as_view(), name='api_ident'),
